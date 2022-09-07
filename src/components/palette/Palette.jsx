@@ -105,21 +105,23 @@ export default function Palette() {
       </div>
       <div className="palettelist-box">
         <h2 className="palettelist-box__title">Saved palettes</h2>
-        {paletteList.map((item, index) => (
-          <div key={index}>
-            <div className="palettelist-box__header">
-              <h3 className="palettelist-box__header--title">{item.title}</h3>
-              <img className="palettelist-box__header--trash" src={trash} alt="delete" onClick={() => onDelete(index)} />
+        <div className="palettelist-container">
+          {paletteList.map((item, index) => (
+            <div key={index}>
+              <div className="palettelist-box__header">
+                <h3 className="palettelist-box__header--title">{item.title}</h3>
+                <img className="palettelist-box__header--trash" src={trash} alt="delete" onClick={() => onDelete(index)} />
+              </div>
+              <div className="palettelist-box__inventory">
+                <div className="palettelist-box__inventory--circleinactived" style={{ background: item.selector1 }} />
+                <div className="palettelist-box__inventory--circleinactived" style={{ background: item.selector2 }} />
+                <div className="palettelist-box__inventory--circleinactived" style={{ background: item.selector3 }} />
+                <div className="palettelist-box__inventory--circleinactived" style={{ background: item.selector4 }} />
+                <div className="palettelist-box__inventory--circleinactived" style={{ background: item.selector5 }} />
+              </div>
             </div>
-            <div className="palettelist-box__inventory">
-              <div className="palettelist-box__inventory--circleinactived" style={{ background: item.selector1 }} />
-              <div className="palettelist-box__inventory--circleinactived" style={{ background: item.selector2 }} />
-              <div className="palettelist-box__inventory--circleinactived" style={{ background: item.selector3 }} />
-              <div className="palettelist-box__inventory--circleinactived" style={{ background: item.selector4 }} />
-              <div className="palettelist-box__inventory--circleinactived" style={{ background: item.selector5 }} />
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
