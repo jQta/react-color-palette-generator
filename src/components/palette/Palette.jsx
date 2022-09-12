@@ -1,13 +1,17 @@
 import "./Palette.scss";
 import { CompactPicker } from "react-color";
 import { useState, useRef } from "react";
+import { API } from "../../shared/services/api";
 import trash from "../../assets/icons/trash.svg";
-import { useEffect } from "react";
+import axios from "axios";
+import Generator from "../generator/Generator";
+
+const baseURL = process.env.REACT_APP_BACK_URL;
 
 export default function Palette() {
   const selector = [1, 2, 3, 4, 5];
   const ref = useRef(null);
-  const [color, setColor] = useState("#999999");
+  const [color, setColor] = useState("#2c2c2c");
   const [index, setIndex] = useState();
   const [selectorColor, setSelectorColor] = useState({
     selector1: color,
@@ -15,11 +19,8 @@ export default function Palette() {
     selector3: color,
     selector4: color,
     selector5: color,
-    title: "",
   });
-  const [paletteSaved, setPaletteSaved] = useState([]);
   const [paletteList, setPaletteList] = useState([]);
-  const [title, setTitle] = useState("");
 
   const toggleActive = ref => {
     if (!ref.current) {
@@ -58,19 +59,15 @@ export default function Palette() {
     }
   };
 
-  function checkInput() {
-    if (title.length !== 0) setPaletteList([...paletteList, paletteSaved]);
-    setTitle(() => "");
-  }
+  const Data = async () => {
+    const res = await axios.get(baseURL + "palettes");
+    setPaletteList(res.data);
+  };
 
-  useEffect(() => {
-    setPaletteSaved({ ...selectorColor, title: title });
-  }, [selectorColor, title]);
-
-  const onDelete = index => {
-    const newPalette = [...paletteList];
-    newPalette.splice(index, 1);
-    setPaletteList(newPalette);
+  const onDelete = item => {
+    API.delete(`palettes/${item._id}`).then(() => {
+      Data();
+    });
   };
 
   return (
@@ -93,15 +90,7 @@ export default function Palette() {
         <div className="compact-box">
           <CompactPicker color={color} onChange={e => handleChange(e)} />
         </div>
-        <div className="searcher-box">
-          <h2 className="searcher-box__title">Name</h2>
-          <div className="searcher-box__tools">
-            <input className="searcher-box__tools--input" placeholder="Website color scheme" onChange={e => setTitle(e.target.value)} value={title} required />
-            <button className="searcher-box__tools--add" onClick={checkInput}>
-              +
-            </button>
-          </div>
-        </div>
+        <Generator Data={Data} selectorColor={selectorColor} />
       </div>
       <div className="palettelist-box">
         <h2 className="palettelist-box__title">Saved palettes</h2>
@@ -110,7 +99,7 @@ export default function Palette() {
             <div key={index}>
               <div className="palettelist-box__header">
                 <h3 className="palettelist-box__header--title">{item.title}</h3>
-                <img className="palettelist-box__header--trash" src={trash} alt="delete" onClick={() => onDelete(index)} />
+                <img className="palettelist-box__header--trash" src={trash} alt="delete" onClick={() => onDelete(item)} />
               </div>
               <div className="palettelist-box__inventory">
                 <div className="palettelist-box__inventory--circleinactived" style={{ background: item.selector1 }} />
